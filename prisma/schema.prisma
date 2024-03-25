@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tag {
+  id           BigInt         @id
+  nom          String         @default(dbgenerated("255")) @db.VarChar
+  categories CategoriesTags[]
+}
+
+model Categorie {
+  id           BigInt         @id
+  nom          String         @db.VarChar(255)
+  tags CategoriesTags[]
+}
+
+
+
+model CategoriesTags {
+  tag       Tag     @relation(fields: [tagId], references: [id])
+  tagId     BigInt // relation scalar field (used in the `@relation` attribute above)
+  categorie   Categorie @relation(fields: [categorieId], references: [id])
+  categorieId BigInt // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+
+  @@id([tagId, categorieId])
+}
